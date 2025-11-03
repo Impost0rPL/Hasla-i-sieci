@@ -1,0 +1,94 @@
+Hasła i ssh w routerze
+
+
+
+niedziela, 2 listopada 2025
+
+21:39
+
+
+
+enable
+configure terminal
+
+--- KONFIGURACJA NAZWY URZĄDZENIA ---
+hostname R1
+
+--- ZABEZPIECZENIE TRYBU UPRZYWILEJOWANEGO (ENABLE SECRET) ---
+enable secret TWOJE_SEKRETNE_HASLO
+
+--- ZABEZPIECZENIE DOSTĘPU PRZEZ KONSOLĘ ---
+line console 0
+password TWOJE_HASLO_KONSOLI
+login
+exit
+
+--- ZABEZPIECZENIE DOSTĘPU ZDALNEGO (VTY - PRZED WŁĄCZENIEM SSH) ---
+line vty 0 4
+password TWOJE_HASLO_VTY
+login
+exit
+
+--- SZYFROWANIE WSZYSTKICH JAWNYCH HASEŁ W KONFIGURACJI ---
+service password-encryption
+
+--- KONFIGURACJA SSH (SECURE SHELL) ---
+ip domain-name TwojaDomena.local
+crypto key generate rsa
+! Powyższa komenda automatycznie włącza SSH. Przy pytaniu o rozmiar klucza wpisz 1024.
+username administrator secret TWOJE_HASLO_USERA
+! Tworzenie lokalnego użytkownika, wymaganego przez SSH.
+
+--- UŻYCIE SSH JAKO JEDYNEGO PROTOKOŁU ZDALNEGO DOSTĘPU ---
+line vty 0 4
+transport input ssh
+login local
+exit
+
+--- ZAPISANIE KONFIGURACJI ---
+end
+copy running-config startup-config
+
+
+
+
+
+--‐---------------------------------‐---------
+
+
+
+enable
+
+configure terminal
+
+
+
+interface GigabitEthernet0/0
+--- Wchodzi do trybu konfiguracji określonego interfejsu. ---
+
+
+
+ip address 192.168.1.1 255.255.255.0
+--- Ustawia adres IP (np. 192.168.1.1) oraz maskę podsieci. ---
+
+no shutdown
+--- Włącza interfejs. Domyślnie interfejsy routera są wyłączone (stan "administratively down"). ---
+
+
+
+exit
+
+
+
+
+
+-----------------------------------------------------
+
+
+
+--- Wyświetlanie Konfiguracji ---
+
+Show run
+
+
+Pobierz program Microsoft OneNote: https://aka.ms/GetOneNoteMobile
